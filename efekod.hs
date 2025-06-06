@@ -240,7 +240,7 @@ toBin2 n = (takeWhile ((<=n).(2^))) [0..n]  --filter'a göre çok daha hızlı
 
 -- THE FOLDR FUNCTION
 {-
-foldl (\x y -> 2*x+y) 0 [1..5]
+foldl (\x y -> 2*x+y) 0 [1..5] //ilki sayi ikincisi dizi olmalı
 0 1 = 1
 1 2 = 4
 4 3 = 11
@@ -256,6 +256,25 @@ sağdan geldiğimiz için x yerine 5 yazılır ilk başta
 5 0 = 10
 4 10 = 18
 ...
+
+
+foldr (\x y -> 2*x+y) [1..3] 5 //YANLIS KULLANIM!!!
+
+
+foldr (\x y -> 2*x+y) 5 [1..3] //ilk deger sağdaki değere atanir
+
+x y
+1 5 = 7
+2 7 = 11
+3 11 = 17
+
+
+foldl (\x y -> 2*x+y) 5 [1..3] //ilk deger soldaki değere atanir.
+
+5 1 = 11
+11 2 = 24
+24 3 = 51
+
 -}
 length3 xs = foldl (\l x-> l+1) 0 xs
 
@@ -267,3 +286,42 @@ length3 xs = foldl (\l x-> l+1) 0 xs
 
 -- dropWhile
 -- koşul sağlandığı sürece listenin başından eleman atar 
+
+
+--[CHAPTER 11] Cebirsel Veri Türleri
+
+-- data Bool = False | True
+-- data Answer = Yes | No | Unknown
+
+-- data Day = Mon | Tue | Wed | Thu | Fri | Sat |Sun deriving (Show,Eq,Enum)
+--en sonda yer alan deriving ifadesi ile diğer sınıfları bu veri türümüze dahil ederiz.
+--eşitlik, yazdırma, enum gibi operatorleri kullanabiliriz artık
+
+data Shape = Circle Float | Rect Float Float deriving(Show)
+
+circum::Shape -> Float
+circum(Rect a b) = 2*(a+b) --pattern eşleme kullandık
+
+--circum (Rect 3 5)         Çıktı: 12.0
+
+data Nat = Zero | Succ Nat deriving(Show)
+
+nat2num::Nat -> Int
+nat2num Zero = 0
+nat2num (Succ n) = 1 + nat2num n
+
+--nat2num (Succ (Succ Zero))    Çıktı: 2
+
+fark _ [] = True
+fark x (n:ns)
+  | x == n    = False
+  | otherwise = fark x ns
+
+myAnd :: Bool -> Bool -> Bool
+myAnd x y = if x then y else False
+  
+testRep []     = True
+testRep (n:ns) = myAnd (fark n ns) (testRep ns)
+
+  
+  
