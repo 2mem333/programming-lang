@@ -323,5 +323,52 @@ myAnd x y = if x then y else False
 testRep []     = True
 testRep (n:ns) = myAnd (fark n ns) (testRep ns)
 
-  
+--Aritmatik ifadeler
+data E = A E E | S E E | M E E | D E E |P E E | N Int deriving (Show)
+--verilen ifadeyi gerçekleyelim: 2 + 3 * 6 ^ 2 / 4 - 7
+
+exp::E
+--işlem önceliğine göre ifadeler oluşturulur.
+exp = S (A (N 2) (D (M (N 3) (P (N 6) (N 2))) (N 4))) (N 7)
+
+evalE :: E->Int
+evalE(A e1 e2) = evalE e1 + evalE e2
+evalE(S e1 e2) = evalE(e1) - evalE(e2)
+evalE(M e1 e2) = evalE(e1) * evalE(e2)
+evalE(D e1 e2) = evalE(e1) `div` evalE(e2) --tam sayı bölmesi için / yerine `div` kullandık
+evalE(P e1 e2) = evalE(e1) ^ evalE(e2)
+evalE(N a) = a
+
+
+{-
+PrefE::E->String
+prefE(A e1 e2) = "+ " ++ prefE e1 ++ " " ++ pref e2
+prefE(N n) = show n
+-}
+
+--ikili agaclar
+data T = T T Int T | L Int deriving (Show)
+--  1'den 7'ye kadar olan sayılar ağaçta saklansın
+
+tree = T (T (L 1) 2 (L 3)) 4 (T (L 5) 6 (L 7))
+
+toL (T t1 n t2) = toL(t1) ++ [n] ++ toL(t2)
+toL(L n) = [n]
+
+{-
+toT fonksiyonunu da yaz...
+-}
+
+toT::[Int] -> T
+toT [n] = L n
+toT ns = T (toT (take m ns)) (ns!!m) (toT (drop (m+1) ns))
+      where m = div (length ns) 2 
+--   toT [1,2,3,4] olunca hatalı çalışıyor !!
+
+
+findT::Int -> T -> Bool
+
+findT a (L n) = n == a
+findT a (T t1 n t2) | n == a = True
+                    | otherwise = findT a (t1) || findT a (t2)
   
